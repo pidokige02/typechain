@@ -1,2 +1,22 @@
-import { init, exit } from "./myPackage";
+import crypto from "crypto";
 
+interface BlockShape {
+  hash: string;       //signature of block
+  prevHash: string;
+  height: number;   // 1,2,3,4 와 같이 block의 위치를 표시해주는 숫자
+  data: string;     //block 이 보호하는 data
+}
+class Block implements BlockShape {
+  public hash: string;
+  constructor(
+    public prevHash: string,
+    public height: number,
+    public data: string
+  ) {
+    this.hash = Block.calculateHash(prevHash, height, data);
+  }
+  static calculateHash(prevHash: string, height: number, data: string) {
+    const toHash = `${prevHash}${height}${data}`;
+    return crypto.createHash("sha256").update(toHash).digest("hex");
+  }
+}
